@@ -4,7 +4,7 @@ Demo:
 
 ```tsx
 import React, { useState } from 'react';
-import { DropdownMenu } from 'vant-react-DropdownMenu';
+import { DropdownMenu } from 'awesome-react-mobile';
 const dropdownOptions1 = [
   { text: '全部商品', value: 0 },
   { text: '新款商品', value: 1 },

@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vant-react-DropdownMenu",
+  "name": "awesome-react-mobile",
   "version": "1.0.0",
   "scripts": {
     "start": "dumi dev",

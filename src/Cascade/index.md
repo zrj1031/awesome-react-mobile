@@ -4,7 +4,7 @@ Demo:
 
 ```tsx
 import React from 'react';
-import { Cascade } from 'vant-react-DropdownMenu';
+import { Cascade } from 'awesome-react-mobile';
 const cascadeData = [
   {
     key: 'key-1',
