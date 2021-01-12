@@ -117,7 +117,7 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
       item => item.key === col[0].parentKey,
     );
     setSelectItem(allItem);
-    onSelect(allItem?.key);
+    onSelect(allItem?.key!);
     setExpand(false);
   };
 
