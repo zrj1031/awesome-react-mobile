@@ -5,7 +5,7 @@
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",
-    "docs:deploy": "gh-pages -d docs-dist",
+    "docs:deploy": "gh-pages -d docs-dist -f",
     "build": "father-build",
     "deploy": "npm run docs:build && npm run docs:deploy",
     "release": "npm run build && npm publish",
@@ -28,26 +28,19 @@
     ]
   },
   "dependencies": {
-    "@types/classnames": "^2.2.11",
-    "react": "^16.12.0",
-    "react-transition-group": "^4.4.1"
+    "classnames": "^2.3.1",
+    "react": "^16.12.0 || ^17.0.0",
+    "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.13.0",
-    "@typescript-eslint/parser": "^4.13.0",
+    "@types/node": "^16.11.1",
     "@umijs/test": "^3.0.5",
-    "dumi": "^1.0.10",
-    "dumi-theme-mobile": "^1.0.0",
-    "eslint": "^7.17.0",
-    "eslint-config-airbnb-typescript": "^12.0.0",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-react": "^7.22.0",
+    "dumi": "^1.0.17",
+    "dumi-theme-mobile": "^1.1.13",
     "father-build": "^1.17.2",
     "gh-pages": "^3.0.0",
     "lint-staged": "^10.0.7",
-    "prettier": "^1.19.1",
+    "prettier": "^2.2.1",
     "yorkie": "^2.0.0"
   }
 }
