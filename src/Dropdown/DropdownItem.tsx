@@ -23,7 +23,7 @@ const DropdownItem: React.FC<DropdownItemPropsType> = ({
         }}
         onClick={handleItemClick}
       >
-        {title || options?.find(option => option.value === value)?.text}
+        {title || options?.find((option) => option.value === value)?.text}
       </div>
     </div>
   );

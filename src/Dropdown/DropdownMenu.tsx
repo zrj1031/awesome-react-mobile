@@ -1,17 +1,18 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect, createRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { DropdownMenuPropsType } from './PropsType';
 import DropdownItem from './DropdownItem';
 import './index.less';
 
-const DropdownMenu: React.FC<DropdownMenuPropsType> & {
-  DropdownItem?: any;
-} = ({ activeColor = '#1989fa', direction = 'down', children }) => {
+const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
+  activeColor = '#1989fa',
+  direction = 'down',
+  children,
+}) => {
   const [dropDownMenuValue, setDropDownMenuValue] = useState('');
   const dropDownMenuRef = useRef<HTMLDivElement>(null);
-  const cssTransitionNodeRefs = useRef<any[]>(children.map(() => createRef()));
 
   useEffect(() => {
     const fn = () => setDropDownMenuValue('');
@@ -91,10 +92,8 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> & {
             classNames={direction}
             unmountOnExit
             key={index}
-            nodeRef={cssTransitionNodeRefs.current[index]}
           >
             <div
-              ref={cssTransitionNodeRefs.current[index]}
               className="fm-dropdown-item"
               style={
                 direction === 'down'
@@ -114,21 +113,23 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> & {
             >
               <div className="fm-overlay" />
               <div
-                className="fm-dropdown-item__content"
+                className={classNames('fm-dropdown-item__content', index)}
                 style={direction === 'down' ? { top: 0 } : { bottom: 0 }}
                 onClick={handleItemWrapperClick}
               >
                 {options?.length > 0
-                  ? (options as {
-                      text: string | number;
-                      value: string | number;
-                      disabled: boolean;
-                    }[]).map(
+                  ? (
+                      options as {
+                        text: string | number;
+                        value: string | number;
+                        disabled: boolean;
+                      }[]
+                    ).map(
                       ({ text, value: optionValue, disabled }, optionIndex) => (
                         <div
                           key={optionIndex}
                           className="fm-cell fm-dropdown-item__option"
-                          onClick={e =>
+                          onClick={(e) =>
                             handleOptionClick(
                               e,
                               () => onChange(optionValue),

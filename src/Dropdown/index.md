@@ -6,9 +6,9 @@ Demo:
 import React, { useState } from 'react';
 import { DropdownMenu } from 'awesome-react-mobile';
 const dropdownOptions1 = [
-  { text: '全部商品', value: 0 },
-  { text: '新款商品', value: 1 },
-  { text: '活动商品', value: 2, disabled: true },
+  { text: '全部商品', value: 1 },
+  { text: '新款商品', value: 2 },
+  { text: '活动商品', value: 3, disabled: true },
 ];
 const dropdownOptions2 = [
   { text: '默认排序', value: 'a' },
@@ -17,12 +17,12 @@ const dropdownOptions2 = [
 
 const DropdownItem = DropdownMenu.DropdownItem;
 
-export default () => {
-  const [dropDownValue1, setDropDownValue1] = useState(0);
+const Demo1 = () => {
+  const [dropDownValue1, setDropDownValue1] = useState(1);
   const [dropDownValue2, setDropDownValue2] = useState('a');
 
   return (
-    <div className="dropdown-container">
+    <div className="dropdown-container" style={{ margin: '20px 0' }}>
       <DropdownMenu>
         <DropdownItem
           options={dropdownOptions1}
@@ -38,6 +38,35 @@ export default () => {
     </div>
   );
 };
+
+const Demo2 = () => {
+  const [dropDownValue1, setDropDownValue1] = useState(1);
+  const [dropDownValue2, setDropDownValue2] = useState('a');
+
+  return (
+    <div className="dropdown-container" style={{ margin: '100px 0' }}>
+      <DropdownMenu activeColor="#ee0a24" direction="up">
+        <DropdownItem
+          options={dropdownOptions1}
+          value={dropDownValue1}
+          onChange={setDropDownValue1}
+        />
+        <DropdownItem
+          options={dropdownOptions2}
+          value={dropDownValue2}
+          onChange={setDropDownValue2}
+        />
+      </DropdownMenu>
+    </div>
+  );
+};
+
+export default () => (
+  <>
+    <Demo1 />
+    <Demo2 />
+  </>
+);
 ```
 
 ## API
