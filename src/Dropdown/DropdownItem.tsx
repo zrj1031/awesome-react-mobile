@@ -9,19 +9,19 @@ const DropdownItem: React.FC<DropdownItemPropsType> = ({
   setDropDownMenuValue,
   activeColor,
   title = '',
+  setActiveIndex,
 }) => {
-  const handleItemClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleItemClick = () => {
+    setActiveIndex();
     setDropDownMenuValue?.((pre: any) => (pre === value ? '' : value));
   };
   return (
-    <div className="fm-dropdown-menu__item">
+    <div className="fm-dropdown-menu__item" onClick={handleItemClick}>
       <div
         className="fm-dropdown-menu__title"
         style={{
           color: dropDownMenuValue === value ? activeColor : '#222',
         }}
-        onClick={handleItemClick}
       >
         {title || options?.find((option) => option.value === value)?.text}
       </div>

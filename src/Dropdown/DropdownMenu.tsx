@@ -1,26 +1,25 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { DropdownMenuPropsType } from './PropsType';
 import DropdownItem from './DropdownItem';
 import './index.less';
+import DropdownOption from './DropdownOption';
+import { useClickAway } from 'ahooks';
 
-const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
-  activeColor = '#1989fa',
-  direction = 'down',
-  children,
-}) => {
+const DropdownMenu: React.FC<DropdownMenuPropsType> & {
+  DropdownItem?: any;
+} = ({ activeColor = '#1989fa', direction = 'down', children }) => {
   const [dropDownMenuValue, setDropDownMenuValue] = useState('');
   const dropDownMenuRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef(null);
+  const itemRefs = useRef(children.map(() => createRef<HTMLDivElement>()));
+  const [activeIndex, setActiveIndex] = useState<number>();
 
-  useEffect(() => {
-    const fn = () => setDropDownMenuValue('');
-    window.addEventListener('click', fn, false);
-    return () => {
-      window.removeEventListener('click', fn);
-    };
-  }, []);
+  useClickAway(() => {
+    setDropDownMenuValue('');
+  }, [navRef, itemRefs.current[activeIndex!]]);
 
   useEffect(() => {
     if (dropDownMenuValue) {
@@ -30,44 +29,13 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
     }
   }, [dropDownMenuValue]);
 
-  const handleOptionClick = (
-    e: React.MouseEvent,
-    callback: () => void,
-    disabled: boolean,
-  ) => {
-    e.stopPropagation();
-    if (!disabled) {
-      callback();
-    }
-  };
-
-  const calcOptionStyle = (
-    value: string | number,
-    optionValue: string | number,
-    disabled: boolean,
-  ) => {
-    const style = {};
-    Object.assign(style, {
-      color: value === optionValue ? activeColor : '#333',
-    });
-    if (disabled) {
-      Object.assign(style, {
-        color: '#999',
-      });
-    }
-    return style;
-  };
-
-  const handleItemWrapperClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <div className="fm-dropdown-menu" ref={dropDownMenuRef}>
       <div
         className={classNames('fm-dropdown-menu_bar', {
           'fm-dropdown-menu_bar--opened': !!dropDownMenuValue,
         })}
+        ref={navRef}
       >
         {children.map((Item, index) => (
           <DropdownItem
@@ -75,6 +43,7 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
             key={index}
             dropDownMenuValue={dropDownMenuValue}
             setDropDownMenuValue={setDropDownMenuValue}
+            setActiveIndex={() => setActiveIndex(index)}
             activeColor={activeColor}
           />
         ))}
@@ -91,68 +60,21 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
             timeout={0}
             classNames={direction}
             unmountOnExit
-            key={index}
+            key={value}
           >
-            <div
-              className="fm-dropdown-item"
-              style={
-                direction === 'down'
-                  ? {
-                      top: dropDownMenuRef.current?.getBoundingClientRect()
-                        .bottom,
-                      bottom: 0,
-                    }
-                  : {
-                      top: 0,
-                      // bottom: `calc(100vh - ${dropDownMenuRef.current?.getBoundingClientRect().top}px)`,
-                      bottom: `calc(${window.innerHeight}px - ${
-                        dropDownMenuRef.current?.getBoundingClientRect().top
-                      }px)`,
-                    }
-              }
-            >
-              <div className="fm-overlay" />
-              <div
-                className={classNames('fm-dropdown-item__content', index)}
-                style={direction === 'down' ? { top: 0 } : { bottom: 0 }}
-                onClick={handleItemWrapperClick}
-              >
-                {options?.length > 0
-                  ? (
-                      options as {
-                        text: string | number;
-                        value: string | number;
-                        disabled: boolean;
-                      }[]
-                    ).map(
-                      ({ text, value: optionValue, disabled }, optionIndex) => (
-                        <div
-                          key={optionIndex}
-                          className="fm-cell fm-dropdown-item__option"
-                          onClick={(e) =>
-                            handleOptionClick(
-                              e,
-                              () => onChange(optionValue),
-                              disabled,
-                            )
-                          }
-                        >
-                          <div
-                            className="fm-cell__title"
-                            style={calcOptionStyle(
-                              value,
-                              optionValue,
-                              disabled,
-                            )}
-                          >
-                            {text}
-                          </div>
-                        </div>
-                      ),
-                    )
-                  : DropdownItemChildren}
-              </div>
-            </div>
+            <DropdownOption
+              ref={itemRefs.current[index]}
+              direction={direction}
+              rect={dropDownMenuRef.current?.getBoundingClientRect()}
+              activeColor={activeColor}
+              options={options}
+              value={value}
+              onChange={(newValue: any) => {
+                onChange(newValue);
+                setDropDownMenuValue('');
+              }}
+              DropdownItemChildren={DropdownItemChildren}
+            />
           </CSSTransition>
         ),
       )}

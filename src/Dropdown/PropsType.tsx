@@ -15,4 +15,5 @@ export interface DropdownItemPropsType {
   setDropDownMenuValue?: (e: any) => void;
   activeColor?: string;
   title?: string;
+  setActiveIndex: () => void;
 }
