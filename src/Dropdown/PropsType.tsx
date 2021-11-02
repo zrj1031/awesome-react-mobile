@@ -18,7 +18,7 @@ export interface DropdownItemPropsType {
 }
 
 export type HOCDropdownItemPropsType = DropdownItemPropsType & {
-  dropDownMenuValue: DropdownOptionValue;
+  isOpening: boolean;
   setDropDownMenuValue: (e: any) => void;
   activeColor: string;
   title: string;

@@ -13,24 +13,22 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
   direction = 'down',
   children,
 }) => {
-  const [dropDownMenuValue, setDropDownMenuValue] =
-    useState<DropdownOptionValue>('');
   const dropDownMenuRef = useRef<HTMLDivElement>(null);
   const barRef = useRef(null);
   const itemRefs = useRef(children.map(() => createRef<HTMLDivElement>()));
   const [activeIndex, setActiveIndex] = useState<number>();
 
   useClickAway(() => {
-    setDropDownMenuValue('');
+    setActiveIndex(undefined);
   }, [barRef, itemRefs.current[activeIndex!]]);
 
-  useLock(!!dropDownMenuValue);
+  useLock(!!activeIndex);
 
   return (
     <div className="fm-dropdown-menu" ref={dropDownMenuRef}>
       <div
         className={classNames('fm-dropdown-menu__bar', {
-          'fm-dropdown-menu__bar--opened': !!dropDownMenuValue,
+          'fm-dropdown-menu__bar--opened': !!activeIndex,
         })}
         ref={barRef}
       >
@@ -38,9 +36,10 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
           <DropdownItem
             {...item.props}
             key={index}
-            dropDownMenuValue={dropDownMenuValue}
-            setDropDownMenuValue={setDropDownMenuValue}
-            setActiveIndex={() => setActiveIndex(index)}
+            isOpening={activeIndex === index}
+            setActiveIndex={() =>
+              setActiveIndex((pre) => (pre === index ? undefined : index))
+            }
             activeColor={activeColor}
           />
         ))}
@@ -53,7 +52,7 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
           index,
         ) => (
           <CSSTransition
-            in={value === dropDownMenuValue}
+            in={index === activeIndex}
             timeout={200}
             classNames={direction}
             unmountOnExit
@@ -68,7 +67,7 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
               value={value}
               onChange={(newValue: DropdownOptionValue) => {
                 onChange(newValue);
-                setDropDownMenuValue('');
+                setActiveIndex(undefined);
               }}
               DropdownItemChildren={DropdownItemChildren}
             />
