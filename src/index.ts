@@ -1,2 +1,2 @@
 export { default as Cascade } from './Cascade';
-export { default as DropdownMenu } from './Dropdown';
+export { DropdownMenu, DropdownItem } from './Dropdown';

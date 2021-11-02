@@ -4,7 +4,7 @@ Demo:
 
 ```tsx
 import React, { useState } from 'react';
-import { DropdownMenu } from 'awesome-react-mobile';
+import { DropdownMenu, DropdownItem } from 'awesome-react-mobile';
 const dropdownOptions1 = [
   { text: '全部商品', value: 1 },
   { text: '新款商品', value: 2 },
@@ -14,8 +14,6 @@ const dropdownOptions2 = [
   { text: '默认排序', value: 'a' },
   { text: '好评排序', value: 'b' },
 ];
-
-const DropdownItem = DropdownMenu.DropdownItem;
 
 const Demo1 = () => {
   const [dropDownValue1, setDropDownValue1] = useState(1);

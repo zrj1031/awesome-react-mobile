@@ -1,19 +1,26 @@
-export interface DropdownMenuPropsType {
-  children: any[];
+import { ReactElement } from 'react';
+
+export type DropdownOptionValue = string | number;
+
+export type DropdownMenuPropsType = {
+  children: ReactElement[];
   activeColor: string;
   direction: 'down' | 'up';
-}
+};
 
 export interface DropdownItemPropsType {
   options?: {
     text: string;
-    value: any;
+    value: DropdownOptionValue;
     disabled?: boolean;
   }[];
-  value?: any;
-  dropDownMenuValue?: any;
-  setDropDownMenuValue?: (e: any) => void;
-  activeColor?: string;
-  title?: string;
-  setActiveIndex: () => void;
+  value: DropdownOptionValue;
 }
+
+export type HOCDropdownItemPropsType = DropdownItemPropsType & {
+  dropDownMenuValue: DropdownOptionValue;
+  setDropDownMenuValue: (e: any) => void;
+  activeColor: string;
+  title: string;
+  setActiveIndex: () => void;
+};

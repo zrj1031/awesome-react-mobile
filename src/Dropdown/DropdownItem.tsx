@@ -1,8 +1,7 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
-import { DropdownItemPropsType } from './PropsType';
+import { HOCDropdownItemPropsType, DropdownOptionValue } from './PropsType';
 
-const DropdownItem: React.FC<DropdownItemPropsType> = ({
+const DropdownItem: React.FC<HOCDropdownItemPropsType> = ({
   options,
   value,
   dropDownMenuValue,
@@ -13,7 +12,9 @@ const DropdownItem: React.FC<DropdownItemPropsType> = ({
 }) => {
   const handleItemClick = () => {
     setActiveIndex();
-    setDropDownMenuValue?.((pre: any) => (pre === value ? '' : value));
+    setDropDownMenuValue?.((pre: DropdownOptionValue) =>
+      pre === value ? '' : value,
+    );
   };
   return (
     <div className="fm-dropdown-menu__item" onClick={handleItemClick}>
