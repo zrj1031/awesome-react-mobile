@@ -11,8 +11,6 @@ const dropdownOptions1 = [
   { text: '活动商品', value: 3, disabled: true },
 ];
 const dropdownOptions2 = [
-  { text: '全部商品', value: 1 },
-
   { text: '默认排序', value: 'a' },
   { text: '好评排序', value: 'b' },
 ];

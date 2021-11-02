@@ -1,9 +1,9 @@
-import React, { useState, useRef, createRef } from 'react';
+import React, { useState, useRef, createRef, useMemo } from 'react';
 import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { useClickAway } from 'ahooks';
-import { DropdownMenuPropsType, DropdownOptionValue } from './PropsType';
-import DropdownItem from './DropdownItem';
+import { DropdownMenuPropsType, TOptionValue } from './PropsType';
+import DropdownTitle from './DropdownTitle';
 import DropdownOption from './DropdownOption';
 import useLock from './useLock';
 import './index.less';
@@ -17,38 +17,39 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
   const barRef = useRef(null);
   const itemRefs = useRef(children.map(() => createRef<HTMLDivElement>()));
   const [activeIndex, setActiveIndex] = useState<number>();
+  const showPopup = useMemo(() => activeIndex !== undefined, [activeIndex]);
 
   useClickAway(() => {
     setActiveIndex(undefined);
   }, [barRef, itemRefs.current[activeIndex!]]);
 
-  useLock(!!activeIndex);
+  useLock(showPopup);
 
   return (
     <div className="fm-dropdown-menu" ref={dropDownMenuRef}>
       <div
         className={classNames('fm-dropdown-menu__bar', {
-          'fm-dropdown-menu__bar--opened': !!activeIndex,
+          'fm-dropdown-menu__bar--opened': showPopup,
         })}
         ref={barRef}
       >
-        {children.map((item, index) => (
-          <DropdownItem
-            {...item.props}
+        {children.map(({ props: { options, value, title } }, index) => (
+          <DropdownTitle
             key={index}
-            isOpening={activeIndex === index}
-            setActiveIndex={() =>
+            title={
+              options?.find((option) => option.value === value)?.text ?? title!
+            }
+            active={activeIndex === index}
+            activeColor={activeColor}
+            onClick={() =>
               setActiveIndex((pre) => (pre === index ? undefined : index))
             }
-            activeColor={activeColor}
           />
         ))}
       </div>
       {children.map(
         (
-          {
-            props: { options, value, onChange, children: DropdownItemChildren },
-          },
+          { props: { options, value, onChange, children: OptionChildren } },
           index,
         ) => (
           <CSSTransition
@@ -61,16 +62,17 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
             <DropdownOption
               ref={itemRefs.current[index]}
               direction={direction}
-              rect={dropDownMenuRef.current?.getBoundingClientRect()}
+              rect={dropDownMenuRef.current?.getBoundingClientRect() as DOMRect}
               activeColor={activeColor}
-              options={options}
+              options={options!}
               value={value}
-              onChange={(newValue: DropdownOptionValue) => {
+              onChange={(newValue: TOptionValue) => {
                 onChange(newValue);
                 setActiveIndex(undefined);
               }}
-              DropdownItemChildren={DropdownItemChildren}
-            />
+            >
+              {OptionChildren}
+            </DropdownOption>
           </CSSTransition>
         ),
       )}

@@ -1,26 +1,10 @@
 import React, { forwardRef } from 'react';
 import classNames from 'classnames';
-interface IProp {
-  direction: 'down' | 'up';
-  rect: any;
-  activeColor: any;
-  options: any;
-  value: any;
-  onChange: any;
-  DropdownItemChildren: any;
-}
+import { IDropdownOptionProps } from './PropsType';
 
-const DropdownOption = forwardRef<HTMLDivElement, IProp>(
+const DropdownOption = forwardRef<HTMLDivElement, IDropdownOptionProps>(
   (
-    {
-      direction,
-      rect,
-      activeColor,
-      options,
-      value,
-      onChange,
-      DropdownItemChildren,
-    },
+    { direction, rect, activeColor, options, value, onChange, children },
     ref,
   ) => {
     const handleOptionClick = (callback: () => void, disabled: boolean) => {
@@ -93,7 +77,7 @@ const DropdownOption = forwardRef<HTMLDivElement, IProp>(
                   </div>
                 </div>
               ))
-            : DropdownItemChildren}
+            : children}
         </div>
       </div>
     );
