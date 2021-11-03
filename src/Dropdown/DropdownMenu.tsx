@@ -11,11 +11,14 @@ import './index.less';
 const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
   activeColor = '#1989fa',
   direction = 'down',
-  children,
+  options,
+  defaultValues = options.map((item) => item[0].value),
+  onOptionChange,
 }) => {
+  const [selectedValues, setSelectedValues] = useState(defaultValues);
   const dropDownMenuRef = useRef<HTMLDivElement>(null);
   const barRef = useRef(null);
-  const itemRefs = useRef(children.map(() => createRef<HTMLDivElement>()));
+  const itemRefs = useRef(options.map(() => createRef<HTMLDivElement>()));
   const [activeIndex, setActiveIndex] = useState<number>();
   const showPopup = useMemo(() => activeIndex !== undefined, [activeIndex]);
 
@@ -33,11 +36,13 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
         })}
         ref={barRef}
       >
-        {children.map(({ props: { options, value, title } }, index) => (
+        {options.map((subOptions, index) => (
           <DropdownTitle
             key={index}
             title={
-              options?.find((option) => option.value === value)?.text ?? title!
+              subOptions?.find(
+                (option) => option.value === selectedValues[index],
+              )?.label ?? ''
             }
             active={activeIndex === index}
             activeColor={activeColor}
@@ -47,35 +52,32 @@ const DropdownMenu: React.FC<DropdownMenuPropsType> = ({
           />
         ))}
       </div>
-      {children.map(
-        (
-          { props: { options, value, onChange, children: OptionChildren } },
-          index,
-        ) => (
-          <CSSTransition
-            in={index === activeIndex}
-            timeout={200}
-            classNames={direction}
-            unmountOnExit
-            key={index}
-          >
-            <DropdownOption
-              ref={itemRefs.current[index]}
-              direction={direction}
-              rect={dropDownMenuRef.current?.getBoundingClientRect() as DOMRect}
-              activeColor={activeColor}
-              options={options!}
-              value={value}
-              onChange={(newValue: TOptionValue) => {
-                onChange(newValue);
-                setActiveIndex(undefined);
-              }}
-            >
-              {OptionChildren}
-            </DropdownOption>
-          </CSSTransition>
-        ),
-      )}
+      {options.map((subOptions, index) => (
+        <CSSTransition
+          in={index === activeIndex}
+          timeout={200}
+          classNames={direction}
+          unmountOnExit
+          key={index}
+        >
+          <DropdownOption
+            ref={itemRefs.current[index]}
+            direction={direction}
+            rect={dropDownMenuRef.current?.getBoundingClientRect() as DOMRect}
+            activeColor={activeColor}
+            options={subOptions}
+            defaultValue={selectedValues[index]}
+            onChange={(newValue: TOptionValue) => {
+              setSelectedValues((pre) => {
+                pre.splice(index, 1, newValue);
+                return pre;
+              });
+              onOptionChange?.(newValue);
+              setActiveIndex(undefined);
+            }}
+          />
+        </CSSTransition>
+      ))}
     </div>
   );
 };

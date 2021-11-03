@@ -1,28 +1,21 @@
-import { ReactElement, ReactNode } from 'react';
-
 export type TDirection = 'down' | 'up';
 
 export type TOptionValue = string | number;
 
-export type TOptions = {
-  text: string;
+export type OptionsItem = {
+  label: string;
   value: TOptionValue;
   disabled?: boolean;
-}[];
-
-export type DropdownMenuPropsType = {
-  children: ReactElement<DropdownItemPropsType>[];
-  activeColor: string;
-  direction: TDirection;
 };
 
-export interface DropdownItemPropsType {
-  options?: TOptions;
-  title?: string;
-  value: TOptionValue;
-  onChange: (e: TOptionValue) => void;
-  children?: ReactNode;
-}
+export type DropdownMenuPropsType = {
+  options: OptionsItem[][];
+  defaultValues?: number[];
+  values?: number[];
+  onOptionChange?: (value: TOptionValue) => void;
+  activeColor?: string;
+  direction?: TDirection;
+};
 
 export interface IDropdownTitleProps {
   active: boolean;
@@ -31,12 +24,11 @@ export interface IDropdownTitleProps {
   title: string;
 }
 
-export interface IDropdownOptionProps {
+export interface DropdownOptionProps {
   direction: TDirection;
-  options: TOptions;
-  value: TOptionValue;
+  options: OptionsItem[];
   rect: DOMRect;
   activeColor: string;
+  defaultValue: TOptionValue;
   onChange: (e: TOptionValue) => void;
-  children?: ReactNode;
 }

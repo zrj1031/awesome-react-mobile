@@ -1,26 +1,25 @@
 import React, { forwardRef } from 'react';
 import classNames from 'classnames';
-import { IDropdownOptionProps } from './PropsType';
+import { DropdownOptionProps, TOptionValue } from './PropsType';
 
-const DropdownOption = forwardRef<HTMLDivElement, IDropdownOptionProps>(
+const DropdownOption = forwardRef<HTMLDivElement, DropdownOptionProps>(
   (
-    { direction, rect, activeColor, options, value, onChange, children },
+    { direction, rect, activeColor, options, onChange, children, defaultValue },
     ref,
   ) => {
-    const handleOptionClick = (callback: () => void, disabled: boolean) => {
+    const handleOptionClick = (value: TOptionValue, disabled: boolean) => {
       if (!disabled) {
-        callback();
+        onChange(value);
       }
     };
 
     const calcOptionStyle = (
-      value: string | number,
       optionValue: string | number,
       disabled: boolean,
     ) => {
       const style = {};
       Object.assign(style, {
-        color: value === optionValue ? activeColor : '#333',
+        color: defaultValue === optionValue ? activeColor : '#333',
       });
       if (disabled) {
         Object.assign(style, {
@@ -53,30 +52,24 @@ const DropdownOption = forwardRef<HTMLDivElement, IDropdownOptionProps>(
           ref={ref}
         >
           {options?.length > 0
-            ? (
-                options as {
-                  text: string | number;
-                  value: string | number;
-                  disabled: boolean;
-                }[]
-              ).map(({ text, value: optionValue, disabled }, optionIndex) => (
-                <div
-                  key={optionIndex}
-                  className={classNames('fm-cell fm-dropdown-item__option', {
-                    'fm-dropdown-item__option--disabled': disabled,
-                  })}
-                  onClick={() =>
-                    handleOptionClick(() => onChange(optionValue), disabled)
-                  }
-                >
+            ? options.map(
+                ({ label, value: optionValue, disabled }, optionIndex) => (
                   <div
-                    className="fm-cell__title"
-                    style={calcOptionStyle(value, optionValue, disabled)}
+                    key={optionIndex}
+                    className={classNames('fm-cell fm-dropdown-item__option', {
+                      'fm-dropdown-item__option--disabled': disabled,
+                    })}
+                    onClick={() => handleOptionClick(optionValue, !!disabled)}
                   >
-                    {text}
+                    <div
+                      className="fm-cell__title"
+                      style={calcOptionStyle(optionValue, !!disabled)}
+                    >
+                      {label}
+                    </div>
                   </div>
-                </div>
-              ))
+                ),
+              )
             : children}
         </div>
       </div>
