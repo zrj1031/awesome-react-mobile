@@ -56,10 +56,12 @@ const Demo1 = () => {
 
 const Demo2 = () => {
   return (
-    <div className="dropdown-container" style={{ margin: '20px 0' }}>
+    <div className="dropdown-container" style={{ margin: '100px 0' }}>
       <DropdownMenu
         options={options}
         defaultValues={[1, 2]}
+        activeColor="#ee0a24"
+        direction="up"
         onOptionChange={(value) => {
           console.log(value);
         }}
