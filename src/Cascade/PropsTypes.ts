@@ -1,11 +1,13 @@
-export type ColId = string | number;
+export type ItemId = string | number;
 
-export type ColItem = {
+export type DataItem = {
   label: string;
-  id: ColId;
-  children?: ColItem[];
+  id: ItemId;
+  children?: DataItem[];
 };
 
-export type FormatColItem = ColItem & {
-  parentId?: ColId;
+export type FormatDataItem = DataItem & {
+  fullId?: ItemId[];
 };
+
+export type Cols = FormatDataItem[][];

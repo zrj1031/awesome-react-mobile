@@ -1,53 +1,37 @@
 import { useState, useEffect } from 'react';
-import { ColItem, ColId, FormatColItem } from './PropsTypes';
+import { ItemId, FormatDataItem, Cols } from './PropsTypes';
 
 function useSelected({
-  selectId,
-  flatCols,
+  fullIds,
+  cols,
   setCols,
 }: {
-  selectId?: ColId;
-  flatCols: ColItem[];
-  setCols: (params: any) => void;
+  fullIds: ItemId[];
+  cols: Cols;
+  setCols: (params: Cols) => void;
 }) {
-  const [selItem, setSelItem] = useState<FormatColItem | undefined>(undefined);
-
-  const parentKeys: ColId[] = [];
-  const findParentKeys = (arr: FormatColItem[], id: ColId) => {
-    const self = arr.find((item) => item.id === id)!;
-    if (self) {
-      parentKeys.unshift(self.id);
-      if (self?.parentId) {
-        findParentKeys(arr, self.parentId);
-      }
-    }
-    return parentKeys;
-  };
+  type SelItem = FormatDataItem | undefined;
+  const [selItem, setSelItem] = useState<SelItem>(undefined);
 
   useEffect(() => {
-    if (selectId) {
-      const selItem = flatCols.find((item) => item.id === selectId);
-      setSelItem(selItem);
-      const keys = findParentKeys(flatCols, selectId);
-
-      const formatCols: any[] = [];
-      const formatColsFn = (arr: ColItem[], keys: (string | number)[]) => {
-        const pKey = [...keys];
-        const sk = pKey.shift();
-        const self = arr.find((item) => item.id === sk);
-        if (self) {
-          formatCols.push(self.children);
-          if (pKey.length > 0) {
-            formatColsFn(arr, pKey);
-          }
+    if (fullIds) {
+      const selCols: FormatDataItem[][] = [cols?.[0]];
+      // FIXME reduce的ts
+      const selItem = fullIds?.reduce((acc, cur, index) => {
+        const curItem = acc?.find((item) => item.id === cur);
+        if (index === fullIds.length - 1) {
+          return curItem as unknown as FormatDataItem[];
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+          selCols.push(curItem?.children!);
+          return curItem?.children as FormatDataItem[];
         }
-        return formatCols;
-      };
-      const finalCols = formatColsFn(flatCols, keys);
-      finalCols.pop();
-      setCols((pre: any) => [...pre, ...finalCols]);
+      }, cols?.[0] ?? []) as unknown as FormatDataItem;
+
+      setSelItem(selItem);
+      setCols(selCols);
     }
-  }, [selectId, flatCols]);
+  }, [fullIds]);
 
   return {
     selItem,

@@ -3,7 +3,7 @@
 Demo:
 
 ```tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Cascade } from 'awesome-react-mobile';
 const cascadeData = [
   {
@@ -50,23 +50,27 @@ const cascadeData = [
   },
 ];
 
-export default () => (
-  <div>
-    <Cascade
-      cascadeData={cascadeData}
-      onSelect={(value) => {
-        console.log(value);
-      }}
-    />
-    <Cascade
-      cascadeData={cascadeData}
-      selectId="id-1-3-1"
-      onSelect={(value) => {
-        console.log(value);
-      }}
-    />
-  </div>
-);
+export default () => {
+  const [selId, setSelId] = useState<string | number>('id-1-3-1');
+  return (
+    <div>
+      <Cascade
+        cascadeData={cascadeData}
+        onSelect={(value) => {
+          console.log(value);
+        }}
+      />
+      <Cascade
+        cascadeData={cascadeData}
+        selectId={selId}
+        onSelect={(value) => {
+          console.log(value);
+          setSelId(value);
+        }}
+      />
+    </div>
+  );
+};
 ```
 
 ## API

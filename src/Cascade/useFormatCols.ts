@@ -1,57 +1,39 @@
 import { useState, useEffect } from 'react';
 import { cloneDeep } from 'lodash-es';
-import { ColItem, ColId } from './PropsTypes';
+import { DataItem, ItemId, FormatDataItem, Cols } from './PropsTypes';
 
-type FormatColItem = ColItem & {
-  parentId?: ColId;
-};
-
-function useFormatCols(initCols: ColItem[]) {
-  const [resultCols, setResultCols] = useState<FormatColItem[][]>([]);
-  const [allCols, setAllCols] = useState<FormatColItem[][]>([]);
-
-  const [flatCols, setFlatCols] = useState<FormatColItem[]>([]);
+function useFormatCols(initData: DataItem[]) {
+  const [cols, setCols] = useState<Cols>([]);
+  const [fullIdQuery, setFullIdQuery] = useState<Record<string, ItemId[]>>({});
 
   useEffect(() => {
-    const formatCols = (arr: ColItem[] = [], parentId?: ColId) => {
+    const formatCols = (
+      arr: FormatDataItem[] = [],
+      parentFullId?: ItemId[],
+    ) => {
       arr.forEach((item) => {
-        if (parentId) {
-          Object.assign(item, {
-            parentId,
-          });
-        }
-        if (item.children) {
-          formatCols(item.children, item.id);
-        }
-      });
-    };
-    const finalCols = cloneDeep(initCols);
-    formatCols(finalCols);
-    setResultCols([finalCols]);
-    setAllCols([finalCols]);
-  }, [initCols]);
-
-  useEffect(() => {
-    const finalCols: FormatColItem[] = [];
-    const formatCols = (arr: ColItem[] = [], parentId?: ColId) => {
-      arr.forEach((item) => {
-        finalCols.push({
-          ...item,
-          parentId,
+        const selfFullId: ItemId[] = [...(parentFullId ?? []), item.id];
+        setFullIdQuery((pre) => ({
+          ...pre,
+          [item.id]: selfFullId,
+        }));
+        Object.assign(item, {
+          fullId: selfFullId,
         });
         if (item.children) {
-          formatCols(item.children, item.id);
+          formatCols(item.children, item.fullId);
         }
       });
     };
-    formatCols(...cloneDeep(allCols));
-    setFlatCols(finalCols);
-  }, [allCols]);
+    const finalCols = cloneDeep(initData);
+    formatCols(finalCols);
+    setCols([finalCols]);
+  }, [initData]);
 
   return {
-    flatCols,
-    cols: resultCols,
-    setCols: setResultCols,
+    fullIdQuery,
+    cols,
+    setCols,
   };
 }
 

@@ -4,14 +4,14 @@ import { useClickAway } from 'ahooks';
 import classNames from 'classnames';
 import useFormatCols from './useFormatCols';
 import useSelected from './useSelected';
-import { ColId, ColItem, FormatColItem } from './PropsTypes';
+import { ItemId, DataItem, FormatDataItem } from './PropsTypes';
 import Icon from './Icon';
 import './index.less';
 
 interface Props {
-  onSelect: (data: ColId) => void;
-  cascadeData: ColItem[];
-  selectId?: ColId;
+  onSelect: (data: ItemId) => void;
+  cascadeData: DataItem[];
+  selectId?: ItemId;
 }
 
 const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
@@ -20,19 +20,18 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
   const backRef = useRef<HTMLDivElement>(null);
 
   const [expand, setExpand] = useState(false);
-  const { cols, setCols, flatCols } = useFormatCols(cascadeData);
+  const { cols, setCols, fullIdQuery } = useFormatCols(cascadeData);
   const { selItem, setSelItem } = useSelected({
-    selectId,
-    flatCols,
+    fullIds: fullIdQuery[selectId!],
+    cols,
     setCols,
   });
 
   useClickAway(() => {
     setExpand(false);
-    console.log(456);
   }, [selectRef, cascadeRef, backRef]);
 
-  const handleExpandSubCol = (index: number, item: FormatColItem) => {
+  const handleExpandSubCol = (index: number, item: FormatDataItem) => {
     setSelItem(item);
     const { children = [] } = item;
     if (children.length > 0) {
@@ -42,8 +41,8 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
         return final;
       });
     } else {
-      onSelect(item.id);
       setExpand(false);
+      onSelect(item.id);
     }
   };
 
@@ -55,12 +54,11 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
     });
   };
 
-  const handleSelectAll = (colIndex: number, col: FormatColItem[]) => {
-    const allItem = cols[colIndex - 1].find(
-      (item) => item.id === col[0].parentId,
-    ) as ColItem;
+  const handleSelectAll = (colIndex: number, col: FormatDataItem[]) => {
+    const parentId = col[0].fullId?.[col[0].fullId?.length - 2];
+    const allItem = cols[colIndex - 1].find((item) => item.id === parentId);
     setSelItem(allItem);
-    onSelect(allItem.id);
+    onSelect(allItem!.id);
     setExpand(false);
   };
 
@@ -120,8 +118,7 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
             {col.map((item) => (
               <div
                 className={classNames('item', {
-                  selected:
-                    item.id === selItem?.id || item.id === selItem?.parentId,
+                  selected: selItem?.fullId?.includes(item.id),
                 })}
                 key={item.id}
                 onClick={() => handleExpandSubCol(colIndex, item)}
