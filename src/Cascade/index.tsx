@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { FC, useState, useRef } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import { useClickAway } from 'ahooks';
 import classNames from 'classnames';
 import useFormatCols from './useFormatCols';
@@ -20,19 +20,25 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
   const backRef = useRef<HTMLDivElement>(null);
 
   const [expand, setExpand] = useState(false);
+
   const { cols, setCols, fullIdQuery } = useFormatCols(cascadeData);
-  const { selItem, setSelItem } = useSelected({
+  const { selItem } = useSelected({
     fullIds: fullIdQuery[selectId!],
     cols,
     setCols,
   });
+
+  const [expandSelItem, setExpandSelItem] = useState(selItem);
+  useEffect(() => {
+    setExpandSelItem(selItem);
+  }, [selItem]);
 
   useClickAway(() => {
     setExpand(false);
   }, [selectRef, cascadeRef, backRef]);
 
   const handleExpandSubCol = (index: number, item: FormatDataItem) => {
-    setSelItem(item);
+    setExpandSelItem(item);
     const { children = [] } = item;
     if (children.length > 0) {
       setCols((pre) => {
@@ -57,7 +63,7 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
   const handleSelectAll = (colIndex: number, col: FormatDataItem[]) => {
     const parentId = col[0].fullId?.[col[0].fullId?.length - 2];
     const allItem = cols[colIndex - 1].find((item) => item.id === parentId);
-    setSelItem(allItem);
+    setExpandSelItem(allItem);
     onSelect(allItem!.id);
     setExpand(false);
   };
@@ -107,7 +113,7 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
                 返回上一级
               </div>
             )}
-            {colIndex === cols.length - 1 && (
+            {colIndex === cols.length - 1 && colIndex !== 0 && (
               <div
                 className="item all"
                 onClick={() => handleSelectAll(colIndex, col)}
@@ -118,7 +124,7 @@ const Cascade: FC<Props> = ({ onSelect, selectId, cascadeData }) => {
             {col.map((item) => (
               <div
                 className={classNames('item', {
-                  selected: selItem?.fullId?.includes(item.id),
+                  selected: expandSelItem?.fullId?.includes(item.id),
                 })}
                 key={item.id}
                 onClick={() => handleExpandSubCol(colIndex, item)}

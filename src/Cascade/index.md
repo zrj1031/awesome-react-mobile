@@ -51,21 +51,24 @@ const cascadeData = [
 ];
 
 export default () => {
-  const [selId, setSelId] = useState<string | number>('id-1-3-1');
+  const [selId, setSelId] = useState<string | number>('');
+  const [selId1, setSelId1] = useState<string | number>('id-1-3-1');
   return (
     <div>
-      <Cascade
-        cascadeData={cascadeData}
-        onSelect={(value) => {
-          console.log(value);
-        }}
-      />
       <Cascade
         cascadeData={cascadeData}
         selectId={selId}
         onSelect={(value) => {
           console.log(value);
           setSelId(value);
+        }}
+      />
+      <Cascade
+        cascadeData={cascadeData}
+        selectId={selId1}
+        onSelect={(value) => {
+          console.log(value);
+          setSelId1(value);
         }}
       />
     </div>
